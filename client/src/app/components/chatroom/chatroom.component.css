@@ -1,0 +1,518 @@
+#navbar-left,
+#navbar-center,
+#navbar-right {
+  top: 0;
+  padding: 0;
+  font-size: larger;
+  width: 50%;
+  position: fixed;
+  height: 6vh;
+  z-index: 1000;
+}
+#navbar-left-bottom, #navbar-right-bottom{
+  bottom: 0;
+  padding: 0;
+  width: 25%;
+  position: fixed;
+  height: 6vh;
+  z-index: 1000;
+} 
+#navbar-left a, #navbar-left-bottom a, #navbar-right a, #navbar-right-bottom a{
+  border: 0;
+  padding: 0.5vh 2vh;
+  margin: 0 1vh;
+  font-size: 3vh;
+  cursor: pointer;
+  font-weight: bolder;
+  background: #343A40;
+  border: 0.2vh solid#343A40;
+  color: #5BC0DE;
+}
+#navbar-left a:hover, #navbar-left-bottom a:hover, #navbar-right a:hover, #navbar-right-bottom a:hover {
+  border: 0.2vh solid #5BC0DE;
+}
+#navbar-left,
+#navbar-right, #navbar-left-bottom, #navbar-right-bottom {
+  width: 25%;
+}
+
+#left-column,
+#right-column {
+  width: 25%;
+  background-color: #f8f8f8;
+}
+#central-column,
+#right-column,
+#left-column {
+  height: 100vh;
+  overflow-y: auto;
+}
+#contact-body,
+#message-thread-body {
+  padding: 6vh 0 0;
+  height: 94vh;
+}
+#contact-body,
+#message-thread-body {
+  height: 100vh;
+}
+
+/* ------------------ Left (message thread) --------------------*/
+#navbar-left{
+  display: flex;
+  justify-content: space-between
+}
+#navbar-left-bottom{
+  display: none;
+}
+#user-in-message-thread {
+  box-sizing: border-box;
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 0.1vh solid #ccc;
+  height: 10vh;
+  width: 100%;
+  padding: 0 3%;
+  border-left: 0;
+  border-right: 0;
+}
+#message-thread-main {
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+}
+#user-image img {
+  margin: 0.5vh;
+  display: block;
+  height: 9vh;
+  object-fit: cover;
+}
+#message-thread-main .wrapper {
+  box-sizing: border-box;
+  padding: 1vh;
+}
+#message-thread-username {
+  height: 3vh;
+  font-size: 2vh;
+  overflow: hidden;
+  line-height: 3vh;
+  font-weight: 600;
+}
+#last-message {
+  height: 2.2vh;
+  font-size: 1.8vh;
+  line-height: 2vh;
+  font-weight: 400;
+  overflow: hidden;
+}
+
+#unread-messages span {
+  display: block;
+  border-radius: 0;
+  font-size: 1.5vh;
+  height: 3vh;
+  width: 100%;
+}
+
+/* ------------------- Center (messages) ---------------------*/
+
+
+#navbar-center {
+  color: white;
+  text-transform: capitalize;
+}
+#central-column a {
+  padding: 1vh 3vh;
+  margin: 0;
+  font-size: 3vh;
+}
+#central-column {
+  width: 50%;
+  /*padding-bottom: 6vh;*/
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  flex-direction: column-reverse;
+}
+#chat-box {
+  padding: 6vh 0;
+}
+#chat-box .message{
+  padding: 0 3% 1vh 3%
+}
+#friend-message{
+  display: flex;
+  
+}
+#my-message{
+  display: flex;
+  justify-content: flex-end
+}
+#chat-box .message-icon{
+  display: flex;
+  flex-direction: column-reverse;
+}
+#chat-box .message-icon .icon-wrap{
+  height: 6vh;
+}
+#chat-box .message-icon .icon-wrap img{
+  object-fit: cover;
+  height: 100%;
+}
+#message-bar {
+  position: fixed;
+  bottom: 0;
+  width: 50%;
+}
+
+#message-bar input {
+  padding: 2vh 5vh;
+  border: 0.1vh solid #ccc;
+  height: 6vh;
+  font-size: 2vh;
+  border-radius: 0px;
+}
+#message-bar button {
+  background-color: #343a40;
+  border: 0.1vh solid #ccc;
+  padding: 0 5vh;
+  font-size: 2vh;
+  border-radius: 0px;
+  cursor: pointer
+}
+#message-by-friend {
+  position: relative;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background-color:burlywood;
+  margin: 2vh 8% 2vh 4vh;
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  flex-direction: column;
+  padding: 1%;
+  font-size: 2.3vh;
+  width: 80%;
+}
+#message-by-friend::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border-top: 1vh solid transparent;
+  border-bottom: 1vh solid #ddd;
+  border-left: 1vh solid transparent;
+  border-right: 1vh solid #ddd;
+  margin-top: -2vh;
+  margin-left: -2vh;
+}
+#recieved-time {
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  justify-content: flex-end;
+  color: #999;
+}
+
+#message-by-me {
+  position: relative;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background-color: #ddd;
+  margin: 2vh 4vh 2vh 8%;
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  flex-direction: column;
+  padding: 1%;
+  font-size: 2.3vh;
+  width: 80%;
+}
+#message-by-me::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  border-top: 1vh solid transparent;
+  border-bottom: 1vh solid #ddd;
+  border-left: 1vh solid #ddd;
+  border-right: 1vh solid transparent;
+  margin-top: -2vh;
+  margin-right: -2vh;
+}
+#sent-time {
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  justify-content: flex-start;
+  color: #999;
+  font-size: 2vh;
+}
+#actions {
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  justify-content: space-between;
+}
+#hint {
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  text-align: center;
+  flex-flow: column;
+  justify-content: center;
+  height: 94vh;
+}
+
+/* ----------------------- Right ( contact thread ) ----------------------*/
+#navbar-right {
+  display: flex;
+  justify-content: space-between;
+}
+#navbar-right-bottom{
+  display: none;
+}
+#user-in-contact, #user-in-member {
+  box-sizing: border-box;
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  border-bottom: 0.1vh solid #ccc;
+  height: 10vh;
+  width: 100%;
+  padding: 0 3%;
+  border-left: 0;
+  border-right: 0;
+}
+#user-in-contact .wrapper, #user-in-member .wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1vh 0;
+}
+#user-contact-image img, #user-member-image img{
+  margin: 0.5vh;
+  display: block;
+  height: 9vh;
+  object-fit: contain;
+}
+#username-contact, #username-member {
+  width: 100%;
+  height: 3vh;
+  font-size: 2vh;
+  overflow: hidden;
+  line-height: 3vh;
+  font-weight: 600;
+}
+#online-status {
+  display: block;
+  font-size: 1.8vh;
+  text-align: center;
+  color: white; 
+  background-color: #5BC0DE;
+  height: 3.3vh;
+  padding: 0 3%;
+}
+
+/* ----------------------- Avatar Modal --------------------------*/
+
+#change-avatar a{
+  display: inline-block;
+  padding: 5px 10px;
+  /* background-color: #343A40; */
+  color: white;
+}
+.modal-body .wrap{
+  display: flex;
+}
+.modal-body form-group{
+  width: 50%;
+}
+#chosen-image-result{
+  margin: 0 auto;
+  width: 180px;
+  height: 200px;
+  border: 0.3px solid #D3D6D8;
+}
+#chosen-image-result img{
+  width: 180px;
+  height: 200px;
+  object-fit: cover
+}
+#avatar-example-header{
+  margin: 16px 0;
+  color: #333;
+  text-align: center;
+}
+#avatar-example-body{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-auto-rows: 200px;
+  grid-gap: 10px;
+  margin: 0 auto;
+  margin: 10px;
+}
+#avatar-example{
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition-duration: 0.3s;
+  border: 0.3px solid #D3D6D8;
+}
+#avatar-example:hover{
+  border: 0.3px solid #96DAE5;
+  background-color: #96DAE5;
+  transform: scale(1.2, 1.2)
+}
+#avatar-example img{
+  object-fit: contain;
+}
+
+/* -------------------- Profile Modal ------------------------*/
+
+#profile-info, #chosenUser-info{
+  width: 100%;
+  display: flex;
+}
+#profile-image, #chosenUser-image {
+  max-width: 200px;
+  width: 40%;
+  height: 200px;
+}
+#profile-image img, #chosenUser-image img{
+  height: 100%;
+  width: 100%;
+  border: 0.3px solid #D3D6D8;
+}
+#profile-name-avatar, #chosenUser-name-avatar{
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-left: 5%;
+}
+
+/*----------------------- Create group Modal --------------------------*/
+#createGroupModal .modal-dialog{
+  min-width: 80%;
+}
+#group-modal-data{
+  display: flex;
+}
+#group-avatar{
+  box-sizing: border-box;
+  padding-right: 1%;
+  width: 20%;
+}
+#group-avatar-placeholder{
+  width: 180px;
+  height: 200px;
+  border: 0.3px solid #D3D6D8;
+}
+#group-avatar-placeholder img{
+  width: 180px;
+  height: 100%;
+  object-fit: cover
+}
+#group-avatar-action{
+  margin: 5vh 0;
+}
+#group-info{
+  width: 33%;
+  padding: 0 1%;
+}
+#group-members{
+  padding-left: 1%;
+  width: 47%;
+}
+#group-members-placeholder{
+  width: 100%;
+  height: 60vh;
+  margin-top: 5vh;
+  border: 0.3px solid #D3D6D8;
+  overflow-y: auto
+}
+
+/* ----------------------- Add members from contact Modal-----------------------*/
+
+#addMemberToModal .modal-body #user-in-contact{
+  border-bottom: 0.1vh solid #ccc;
+}
+#addMemberToModal .modal-body #user-in-contact:nth-of-type(1){
+  border-top: 0.1vh solid #ccc;
+}
+.chosenContactToMemberOfGroup{
+  /* transform: scale(1.2, 1.2); */
+  background-color: #96DAE5
+  /* border: 0.3px solid #96DAE5; */
+}
+#delete-member{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ------------------------ Chosen user or group Modal ---------------------*/
+
+#editGroupForm{
+  padding: 20px 0;
+}
+#chosenUser-info{
+  display: flex;
+}
+#chosenUser-image{
+  width: 20%;
+}
+#chosenUserModal #chosenUser-name-avatar {
+
+  padding: 0 1%;
+  width: 30%;
+}
+#chosenUserModal #group-members{
+  padding-right: 1%;
+  border: 0.3px solid#ccc;
+  width: 50%;
+  height: 70vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/*--------------------------------- Media -----------------------------------*/
+
+@media screen and (max-width: 1100px) {
+  #navbar-left .hide-on-md{
+    display: none
+  }
+  #navbar-right .hide-on-md{
+    display: none
+  }
+  #navbar-left{
+    justify-content: flex-start;
+  }
+  #navbar-right{
+    justify-content: flex-end;
+  }
+  #navbar-left-bottom{
+    display: grid;
+    justify-content: flex-start;
+    border: 0.1vh solid #CCCCCC;
+  }
+  #navbar-right-bottom{
+    display: grid;
+    justify-content: flex-end;
+    border: 0.1vh solid #CCCCCC;
+  }
+  #message-bar input::-webkit-input-placeholder {
+    color: white;
+  } 
+  #message-bar input{
+    background-color: #6F7C89;
+    border: 0;
+    color: white;
+  }
+}

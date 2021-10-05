@@ -1,0 +1,42 @@
+{
+  "name": "instant-messaging-system",
+  "version": "1.0.0",
+  "description": "online chat that offers real-time text transmission over the Internet",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mard-one/MEAN-chat-app.git"
+  },
+  "keywords": [
+    "chat",
+    "app",
+    "mean",
+    "instant",
+    "message"
+  ],
+  "author": "Mardon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mard-one/MEAN-chat-app/issues"
+  },
+  "homepage": "https://github.com/mard-one/MEAN-chat-app#readme",
+  "dependencies": {
+    "aws-sdk": "2.241.1",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.0",
+    "mongoose": "^5.0.0-rc1",
+    "morgan": "^1.9.0",
+    "multer": "^1.3.0",
+    "multer-s3": "2.7.0",
+    "socket.io": "^2.0.4"
+  },
+  "devDependencies": {
+    "dotenv": "5.0.1"
+  }
+}

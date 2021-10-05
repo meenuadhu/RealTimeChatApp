@@ -1,0 +1,450 @@
+<div id="chatroom">
+  <div class="row align-items-start no-gutters">
+    <div id="left-column">
+
+      <nav id="navbar-left" class="navbar bg-dark">
+        <a class="nav-item left-menu-item" data-toggle="modal" data-target="#profileModal">  {{currentUser.user?.username}}</a>
+        <a class="nav-item left-menu-item hide-on-md" data-toggle="modal" data-target="#createGroupModal">Create group</a>
+      </nav>
+      <div class="modal fade" id="createGroupModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="createGroupModalLabel">New group</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span id="group-modal-close" aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form [formGroup]="formCreateGroup" (ngSubmit)="groupFormSubmitted($event)" id="formCreateGroup">
+              <div class="modal-body">
+                <div id="group-modal-data">
+                  <div id="group-avatar">
+                    <div id="group-avatar-placeholder">
+                      <!-- <img src="#"> `${{chosenGroupAvatar?.url}}` -->
+                      <!-- <img [attr.src]='https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + chosenGroupAvatar.url> -->
+                      <img [attr.src]="chosenGroupAvatar?.url ? chosenGroupAvatar?.url : './assets/images/defaultGroup.svg'">
+                    </div>
+                    <div id="group-avatar-action">
+                      <input type="file" (change)="createGroupModalChange($event)" name="groupAvatar" id="groupAvatar" formControlName="groupAvatar">
+                    </div>
+                  </div>
+                  <div id="group-info">
+                    <div class="form-group">
+                      <label class="form-control-label" for="groupName">Name of group *</label>
+                      <input type="text" name="groupName" id="groupName" formControlName="groupName" class="form-control form-control-success"
+                        placeholder="Enter name..." autofocus>
+                      <small class="text-danger" *ngIf="formCreateGroup.controls.groupName.errors?.required && formCreateGroup.controls.groupName.dirty">
+                        This field is required
+                      </small>
+                      <small class="text-danger" *ngIf="formCreateGroup.controls.groupName.errors?.minlength || formCreateGroup.controls.groupName.errors?.maxlength && formRegister.controls.username.dirty">
+                        Groupname must be at least 3 characters but no more than 30
+                      </small>
+                    </div>
+                    <div class="form-group">
+                      <label for="groupInfo">Info</label>
+                      <textarea form="#formCreateGroup" class="form-control" id="groupInfo" rows="3" formControlName="groupInfo"></textarea>
+                    </div>
+                  </div>
+                  <div id="group-members">
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" (click)="addContactsToMembers()">From contacts</button>
+                      </span>
+                      <input type="text" name="groupMember" id="groupMember" formControlName="groupMember" class="form-control" placeholder="Member...">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" (click)="addUsernameToMembers()">Add</button>
+                      </span>
+                    </div>
+                    <small id="fileHelp" class="form-text text-muted">
+                      {{groupMessage}}
+                    </small>
+                    <div id="group-members-placeholder">
+                      <div id="member-from-contact" *ngFor="let member of chosenMembersOfGroup">
+                        <div id="user-in-member">
+                          <div id="user-member-image">
+                            <img [attr.src]="member?.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + member?.avatar : './assets/images/defaultUser.svg'">
+                          </div>
+                          <div class="wrapper">
+                            <div id="username-member">{{member.username}}</div>
+                          </div>
+                          <div id="delete-member">
+                            <button type="button" class="btn btn-danger" (click)="deleteMember(member)">Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <h4>{{formGroupMessage}}</h4>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="createGroupModalBack()">Back</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addMemberToModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Contacts to add to group</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="user-in-contact" [ngClass]="{'chosenContactToMemberOfGroup': isChosen(contact) }" *ngFor='let contact of (contactThread$ | async)?.contacts | orderBy:order'
+                (click)="chosenContactToMembers(contact)">
+                <div id="user-contact-image">
+                  <img [attr.src]="contact?.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + contact?.avatar : './assets/images/'+ 'defaultUser.svg'">
+                  <!-- <img *ngIf="contact.avatar.length" src='./assets/images/{{contact.avatar}}'> -->
+                </div>
+                <div class="wrapper">
+                  <div id="username-contact">{{contact.username}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" (click)="addMemberToModalSubmit()">Choose contacts</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="addMemberToModalBack()">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="profileModalLabel">Dashboard</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span id="profile-modal-close" aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="profile-info">
+                <div id="profile-image" *ngIf="currentUser.user">
+                  <ng-container *ngIf="(currentUser?.user && currentUser?.user.avatar)">
+                    <img [attr.src]="(chosenProfileAvatar?.url) ? (chosenProfileAvatar?.url) : currentUser?.user.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + currentUser?.user.avatar : './assets/images/defaultUser.svg'"
+                      [ngStyle]="{'object-fit': (chosenProfileAvatar?.type) == 'userAvatar'? 'cover':'contain'}" />
+                  </ng-container>
+                </div>
+                <div id="profile-name-avatar">
+                  <div id="profile-username">
+                    <h3>
+                      {{currentUser.user?.username}}
+                    </h3>
+                  </div>
+                  <div id="change-avatar">
+                    <a id="change-avatar-modal" (click)="changeAvatarModal()" class="btn btn-primary">change profile image</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="avatarModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content ">
+            <div class="modal-header">
+              <h5 class="modal-title" id="avatarModalLabel">Choose image</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span id="avatar-modal-close" aria-hidden="true" (click)="avatarModalClose()">&times;</span>
+              </button>
+            </div>
+            <form [formGroup]="formAvatar" (ngSubmit)="avatarFormSubmitted($event)">
+              <div class="modal-body">
+                <div class="wrap">
+                  <div class="main-group">
+                    <label for="exampleFile">Choose images to upload (JPG, JPEG, PNG)</label>
+                    <input type="file" (change)="avatarModalChange($event)" accept=".jpg, .jpeg, .png" class="form-control-file" id="profileAvatar"
+                      aria-describedby="fileHelp" name="profileAvatar" formControlName="avatar">
+                  </div>
+                  <div id="chosen-image-result">
+                    <ng-container *ngIf="(currentUser?.user && currentUser?.user.avatar)">
+                      <img [attr.src]="(chosenProfileAvatar?.url) ? (chosenProfileAvatar?.url) : currentUser?.user.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + currentUser?.user.avatar : './assets/images/defaultUser.svg'"
+                        [ngStyle]="{'object-fit': (chosenProfileAvatar?.type) == 'userAvatar'? 'cover':'contain'}" />
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <div id="avatar-message" [ngClass]="{'text-danger': !statusProfileAvatar?.success, 'text-primary': statusProfileAvatar?.success}">
+                  {{statusProfileAvatar?.message}}
+                </div>
+                <div id="avatar-action">
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                  <button id="avatar-modal-back" type="button" class="btn btn-secondary" data-dismiss="modal" (click)="avatarModalBack()">Back</button>
+                </div>
+              </div>
+            </form>
+            <div style="width: 100%; height: 1px; border: 0.1px solid #E9ECEF; border-bottom: 0;"></div>
+            <!-- <div id="avatar-examples">
+              <div id="avatar-example-header">
+                <h4>Or choose from examples</h4>
+              </div>
+              <div id="avatar-example-body">
+                <div id="avatar-example" *ngFor="let image of defaultImages" (click)="chosenProfileAvatarDefault(image)">
+                  <img src="./assets/images/{{image}}">
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+      <div id="message-thread-body">
+        <div id="user-in-message-thread" *ngFor="let thread of (messageThread$ | async)?.messageThread.reverse()" (click)="chooseUserFromMessageThread(thread)">
+          <div id="message-thread-main">
+            <ng-container *ngIf="!thread.creator">
+              <ng-container *ngFor="let user of thread.chatBetween">
+                <div id="user-image" *ngIf="user._id != currentUser.user._id">
+                  <img [attr.src]="user?.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + user?.avatar : './assets/images/defaultUser.svg'">
+                </div>
+                <div class="wrapper" *ngIf="user._id != currentUser.user._id">
+                  <div id="message-thread-username">{{user.username}}</div>
+                  <div id="last-message">{{thread.lastMessage}}</div>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="thread.creator">
+              <div id="user-image">
+                <img [attr.src]="thread?.avatar !== 'defaultGroup.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + thread?.avatar : './assets/images/defaultGroup.svg'">
+              </div>
+              <div class="wrapper">
+                <div id="message-thread-username">{{thread.name}}</div>
+                <div id="last-message">{{thread.lastMessage}}</div>
+              </div>
+            </ng-container>
+          </div>
+          <ng-container>
+            <div id="unread-messages" *ngIf="thread.unreadMessages > 0">
+              <span class="badge badge-info">{{thread.unreadMessages}}</span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <nav id="navbar-left-bottom" class="navbar bg-dark">
+        <a class="nav-item left-menu-item" data-toggle="modal" data-target="#createGroupModal">Create group</a>
+      </nav>
+    </div>
+    <div id="central-column">
+
+      <nav id="navbar-center" class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" data-toggle="modal" data-target="#chosenUserModal">
+          {{ chosenUser?.user && chosenUser.user?.username || chosenGroup?.group && chosenGroup.group?.name }}
+        </a>
+      </nav>
+      <div class="modal" id="chosenUserModal" tabindex="-1" role="dialog" aria-labelledby="chosenUserModalLabel" aria-hidden="true">
+        <div [ngClass]="{'modal-dialog modal-lg': chosenUser && chosenUser.user }" [ngStyle]="{'width': !(chosenGroup && chosenGroup.group) ? 'auto':'80%', 'margin': '30px auto'}"
+          role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 *ngIf="chosenUser?.user" class="modal-title" id="chosenUserModalLabel">Profile of {{chosenUser?.user && chosenUser.user?.username}}</h5>
+              <h5 *ngIf="chosenGroup?.group" class="modal-title" id="chosenUserModalLabel">Group</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span id="chosenUser-modal-close" aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form [formGroup]="formEditGroup" (submit)="formGroupInfoSubmitted($event, chosenGroup?.group)">
+              <div class="modal-body">
+                <div id="chosenUser-info">
+                  <div id="chosenUser-image" *ngIf="chosenGroup?.group">
+                    <img [attr.src]="(editGroupAvatar?.url)?(editGroupAvatar?.url): chosenGroup?.group.avatar !== 'defaultGroup.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + chosenGroup?.group.avatar : './assets/images/defaultGroup.svg'">
+                    <input type="file" (change)="chosenGroupModalInputChange($event)" name="editGroupForm" id="editGroupForm" formControlName="editGroupForm">
+                  </div>
+                  <div id="chosenUser-image" *ngIf="chosenUser?.user">
+                    <img [attr.src]="chosenUser?.user.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + chosenUser?.user.avatar : './assets/images/defaultUser.svg'">
+                  </div>
+
+                  <div id="chosenUser-name-avatar">
+                    <div id="chosenUser-username">
+                      <label *ngIf="chosenGroup?.group" for="groupInfoName">Name of group</label>
+                      <h3 id="groupInfoName">
+                        {{chosenUser?.user && chosenUser.user?.username || chosenGroup?.group && chosenGroup.group?.name }}
+                      </h3>
+
+                      <label *ngIf="chosenGroup?.group" for="groupInfoDescription">Description</label>
+                      <h5 *ngIf="chosenGroup?.group" id="groupInfoDescription">
+                        {{chosenGroup?.group && chosenGroup.group?.description}}
+                      </h5>
+                      <label *ngIf="chosenGroup?.group" for="groupInfoCreator">Created by</label>
+                      <h5 *ngIf="chosenGroup?.group" id="groupInfoCreator">
+                        {{chosenGroup?.group && chosenGroup.group?.creator.username}}
+                      </h5>
+                    </div>
+                  </div>
+                  <div id="group-members" *ngIf="chosenGroup?.group">
+                    <div id="user-in-contact" *ngFor='let member of chosenGroup?.group.members | orderBy:order'>
+                      <div id="user-contact-image">
+                        <img [attr.src]="member.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + member.avatar : './assets/images/defaultUser.svg'">
+                      </div>
+                      <div class="wrapper">
+                        <div id="username-contact">{{member.username}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <h5>
+                  {{formEditGroupMessage}}
+                </h5>
+                <button type="submit" *ngIf="chosenGroup?.group" class="btn btn-primary">Save</button>
+                <button type="button" *ngIf="chosenGroup?.group" class="btn btn-info" (click)="addMemberToExistingGroup()">Add user</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal" id="userToGroup" tabindex="-1" role="dialog" aria-labelledby="chosenUserModalLabel" aria-hidden="true">
+        <div class='modal-dialog' role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="chosenUserModalLabel">Add user(s) to the group</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span id="chosenUser-modal-close" aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="choose-group-members" *ngIf="chosenGroup?.group">
+                <div id="user-in-contact" [ngStyle]="{'background-color': isChosen(contact)? '#96DAE5': 'white'}" *ngFor='let contact of currentUser?.user.contactThread && currentUser.user.contactThread?.contacts | orderBy:order'
+                  (click)="chooseMemberToExistingGroup(contact)">
+                  <div id="user-contact-image">
+                    <img [attr.src]="contact?.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + contact?.avatar : './assets/images/defaultUser.svg'">
+                  </div>
+                  <div class="wrapper">
+                    <div id="username-contact">{{contact.username}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" (click)="chooseMemberToExistingGroupChoose(chosenGroup?.group)">Choose</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="chooseMemberToExistingGroupBack()">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="chat-box" *ngIf="((messages$ | async) && (chosenUser?.user || chosenGroup?.group))">
+        <ng-container *ngFor="let message of (messages$ | async)">
+          <div *ngIf=" (message.sender != currentUser.user._id )" class="message" id="friend-message">
+            <div class="message-icon">
+              <div class="icon-wrap">
+                <img *ngIf='(chosenUser?.user && chosenUser.user?.avatar)' [attr.src]="chosenUser.user.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + chosenUser.user.avatar : './assets/images/defaultUser.svg'"
+                  class="icon">
+                <img *ngIf='(chosenGroup?.group && chosenGroup.group?.avatar)' [attr.src]="chosenGroup.group.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + chosenGroup.group.avatar : './assets/images/defaultUser.svg'"
+                  class="icon">
+              </div>
+            </div>
+            <div id="message-by-friend">
+              <div id="text">{{message.text}}</div>
+              <div id="recieved-time">{{message.sentAt | date : "H:mm"}}</div>
+            </div>
+          </div>
+          <div *ngIf="(message.sender == currentUser.user._id )" class="message" id="my-message">
+            <div id="message-by-me">
+              <div id="text">{{message.text}}</div>
+              <div id="sent-time">{{message.sentAt | date : "H:mm"}}</div>
+            </div>
+            <div class="message-icon">
+              <div class="icon-wrap">
+                <img *ngIf='chosenProfileAvatar?.url' [attr.src]="(chosenProfileAvatar?.url) ? (chosenProfileAvatar?.url) : './assets/images/' + (currentUser?.user && currentUser?.user.avatar)"
+                  [ngStyle]="{'object-fit': (chosenProfileAvatar?.type) == 'userAvatar'? 'cover':'contain'}" />
+                <img *ngIf='(currentUser?.user && currentUser.user?.avatar)'  [attr.src]="(currentUser?.user && currentUser?.user.avatar) !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + (currentUser?.user && currentUser?.user.avatar) : './assets/images/defaultUser.svg'"
+                />
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div id="message-bar" *ngIf="(chosenGroup?.group || chosenUser?.user)">
+        <form [formGroup]="formMessage" (submit)="sendMessage()">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Message..." aria-label="Search for..." autofocus name="message" formControlName="message">
+            <span class="input-group-btn">
+              <button class="btn btn-secondary" type="submit">Send</button>
+            </span>
+          </div>
+        </form>
+      </div>
+      <div id="hint" *ngIf="!((messages$ | async) && chosenUser?.user || chosenGroup?.group)">
+        <h4 *ngIf="currentUser?.loaded">Please, select user to begin chatting</h4>
+      </div>
+      <div id="token-expired" *ngIf="!currentUser.user?.loaded">
+        {{currentUser.user?.message}}
+      </div>
+
+    </div>
+    <div id="right-column">
+
+      <nav id="navbar-right" class="navbar navbar-dark bg-dark">
+        <a class="nav-item left-menu-item hide-on-md" data-toggle="modal" data-target="#contactModal">Add contacts</a>
+        <a class="nav-item left-menu-item" (click)="logout()">Log out</a>
+      </nav>
+      <div class="modal" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="contactModalLabel">Adding a person to contact list</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" (click)="modalClosed()">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="formContact" (submit)="addContact()">
+                <div class="form-group">
+                  <label class="col-form-label" for="formGroupExampleInput">Enter username</label>
+                  <input name="username" formControlName="username" aria-describedby="usernameHelp" type="text" class="form-control" id="formGroupExampleInput"
+                    placeholder="Username..." autofocus>
+                  <small id="usernameHelp" class="form-text text-muted">Please, enter a user that registered</small>
+                </div>
+                <ng-container *ngIf="addContactToContactsMessage">
+                  <div *ngIf="addContactToContactsStatus" class="alert alert-success" role="alert">
+                    {{addContactToContactsMessage}}
+                  </div>
+                  <div *ngIf="!addContactToContactsStatus" class="alert alert-danger" role="alert">
+                    {{addContactToContactsMessage}}
+                  </div>
+                </ng-container>
+                <hr>
+                <div id="actions">
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modalClosed()">Close</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="contact-body">
+        <ng-container *ngIf="(contactThread$ | async)">
+          <div id="user-in-contact" *ngFor='let contact of (contactThread$ | async).contacts | orderBy:order' (click)="chooseUserFromContactThread(contact)">
+            <div id="user-contact-image">
+              <img [attr.src]="contact?.avatar !== 'defaultUser.svg' ? 'https://s3.ap-northeast-2.amazonaws.com/mardon-chat-bucket/' + contact?.avatar : './assets/images/defaultUser.svg'">
+            </div>
+            <div class="wrapper">
+              <div id="username-contact">{{contact.username}}</div>
+            </div>
+            <ng-container *ngFor="let oUser of onlineUsers">
+              <div id="online-status" *ngIf="oUser == contact._id ">
+                online
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+
+      <nav id="navbar-right-bottom" class="navbar  bg-dark">
+        <a class="nav-item left-menu-item" data-toggle="modal" data-target="#contactModal">Add contacts</a>
+      </nav>
+
+      
+     
+    </div>
+  </div>
+</div>
